@@ -29,7 +29,7 @@ namespace{
         MemValue(const DWORD iSizeKbytes) {
             _value = (Type*)malloc(iSizeKbytes);
         }
-		
+
         ~MemValue () {
             free();
         }
@@ -65,13 +65,9 @@ namespace{
         BOOL _ok;
     };
 
-    const StatusMapType& getStatusMap()
+    const StatusMapType getStatusMap()
     {
-        static StatusMapType result;
-        if(!result.empty())
-        {
-            return result;
-        }
+        StatusMapType result;
         // add only first time
 #define STATUS_PRINTER_ADD(value, type) result.insert(std::make_pair(value, type))
         STATUS_PRINTER_ADD("BUSY", PRINTER_STATUS_BUSY);
@@ -103,13 +99,9 @@ namespace{
         return result;
     }
 
-    const StatusMapType& getJobStatusMap()
+    const StatusMapType getJobStatusMap()
     {
-        static StatusMapType result;
-        if(!result.empty())
-        {
-            return result;
-        }
+        StatusMapType result;
         // add only first time
 #define STATUS_PRINTER_ADD(value, type) result.insert(std::make_pair(value, type))
         // Common statuses
@@ -139,13 +131,9 @@ namespace{
         return result;
     }
 
-    const StatusMapType& getAttributeMap()
+    const StatusMapType getAttributeMap()
     {
-        static StatusMapType result;
-        if(!result.empty())
-        {
-            return result;
-        }
+        StatusMapType result;
         // add only first time
 #define ATTRIBUTE_PRINTER_ADD(value, type) result.insert(std::make_pair(value, type))
         ATTRIBUTE_PRINTER_ADD("DIRECT", PRINTER_ATTRIBUTE_DIRECT);
@@ -179,13 +167,9 @@ namespace{
         return result;
     }
 
-    const StatusMapType& getJobCommandMap()
+    const StatusMapType getJobCommandMap()
     {
-        static StatusMapType result;
-        if(!result.empty())
-        {
-            return result;
-        }
+        StatusMapType result;
         // add only first time
 #define COMMAND_JOB_ADD(value, type) result.insert(std::make_pair(value, type))
         COMMAND_JOB_ADD("CANCEL", JOB_CONTROL_CANCEL);
@@ -230,7 +214,8 @@ namespace{
         //DWORD                Status;
         v8::Local<v8::Array> result_printer_job_status = V8_VALUE_NEW_DEFAULT_V_0_11_10(Array);
         int i_status = 0;
-        for(StatusMapType::const_iterator itStatus = getJobStatusMap().begin(); itStatus != getJobStatusMap().end(); ++itStatus)
+        StatusMapType jobStatusMap = getJobStatusMap();
+        for(StatusMapType::const_iterator itStatus = jobStatusMap.begin(); itStatus != jobStatusMap.end(); ++itStatus)
         {
             if(job->Status & itStatus->second)
             {
@@ -372,7 +357,8 @@ namespace{
         // http://msdn.microsoft.com/en-gb/library/windows/desktop/dd162845(v=vs.85).aspx
         v8::Local<v8::Array> result_printer_status = V8_VALUE_NEW_DEFAULT_V_0_11_10(Array);
         int i_status = 0;
-        for(StatusMapType::const_iterator itStatus = getStatusMap().begin(); itStatus != getStatusMap().end(); ++itStatus)
+        StatusMapType statusMap = getStatusMap();
+        for(StatusMapType::const_iterator itStatus = statusMap.begin(); itStatus != statusMap.end(); ++itStatus)
         {
             if(printer->Status & itStatus->second)
             {
@@ -385,7 +371,8 @@ namespace{
         //DWORD                Attributes;
         v8::Local<v8::Array> result_printer_attributes = V8_VALUE_NEW_DEFAULT_V_0_11_10(Array);
         int i_attribute = 0;
-        for(StatusMapType::const_iterator itAttribute = getAttributeMap().begin(); itAttribute != getAttributeMap().end(); ++itAttribute)
+        StatusMapType attributeMap = getAttributeMap();
+        for(StatusMapType::const_iterator itAttribute = attributeMap.begin(); itAttribute != attributeMap.end(); ++itAttribute)
         {
             if(printer->Attributes & itAttribute->second)
             {
@@ -588,8 +575,9 @@ MY_NODE_MODULE_CALLBACK(setJob)
         RETURN_EXCEPTION_STR("Wrong job number");
     }
     std::string jobCommandStr(*jobCommandV8);
-    StatusMapType::const_iterator itJobCommand = getJobCommandMap().find(jobCommandStr);
-    if(itJobCommand == getJobCommandMap().end())
+    StatusMapType jobCommandMap = getJobCommandMap();
+    StatusMapType::const_iterator itJobCommand = jobCommandMap.find(jobCommandStr);
+    if(itJobCommand == jobCommandMap.end())
     {
         RETURN_EXCEPTION_STR("wrong job command. use getSupportedJobCommands to see the possible commands");
     }
@@ -613,7 +601,8 @@ MY_NODE_MODULE_CALLBACK(getSupportedJobCommands)
     MY_NODE_MODULE_HANDLESCOPE;
     v8::Local<v8::Array> result = V8_VALUE_NEW_DEFAULT_V_0_11_10(Array);
     int i = 0;
-    for(StatusMapType::const_iterator itJob = getJobCommandMap().begin(); itJob != getJobCommandMap().end(); ++itJob)
+    StatusMapType jobCommandMap = getJobCommandMap();
+    for(StatusMapType::const_iterator itJob = jobCommandMap.begin(); itJob != jobCommandMap.end(); ++itJob)
     {
         result->Set(i++, V8_STRING_NEW_UTF8(itJob->first.c_str()));
     }
