@@ -405,19 +405,107 @@ namespace{
         //LPDEVMODE            pDevMode;
         //PSECURITY_DESCRIPTOR pSecurityDescriptor;
 
-        if(printer->cJobs > 0)
-        {
-            v8::Local<v8::Array> result_printer_jobs = V8_VALUE_NEW_V_0_11_10(Array, printer->cJobs);
-            // get jobs
-            std::string error_str = retrieveAndParseJobs(printer->pPrinterName, printer->cJobs, result_printer_jobs, iPrinterHandle);
-            if(!error_str.empty())
-            {
-                return error_str;
-            }
-            result_printer->Set(V8_STRING_NEW_UTF8("jobs"), result_printer_jobs);
-        }
+        // if(printer->cJobs > 0)
+        // {
+        //     v8::Local<v8::Array> result_printer_jobs = V8_VALUE_NEW_V_0_11_10(Array, printer->cJobs);
+        //     // get jobs
+        //     std::string error_str = retrieveAndParseJobs(printer->pPrinterName, printer->cJobs, result_printer_jobs, iPrinterHandle);
+        //     if(!error_str.empty())
+        //     {
+        //         return error_str;
+        //     }
+        //     result_printer->Set(V8_STRING_NEW_UTF8("jobs"), result_printer_jobs);
+        // }
         return "";
     }
+}
+
+MY_NODE_MODULE_CALLBACK(debugEnumPrintersW)
+{
+    MY_NODE_MODULE_HANDLESCOPE;
+    DWORD printers_size = 0;
+    DWORD printers_size_bytes = 0, dummyBytes = 0;
+    DWORD Level = 2;
+    DWORD flags = PRINTER_ENUM_LOCAL | PRINTER_ENUM_CONNECTIONS;// https://msdn.microsoft.com/en-us/library/cc244669.aspx
+    // First try to retrieve the number of printers
+    BOOL bError = EnumPrintersW(flags, NULL, 2, NULL, 0, &printers_size_bytes, &printers_size);
+    // allocate the required memmory
+    MemValue<PRINTER_INFO_2W> printers(printers_size_bytes);
+    if(!printers)
+    {
+        RETURN_EXCEPTION_STR("Error on allocating memory for printers");
+    }
+
+    bError = EnumPrintersW(flags, NULL, 2, (LPBYTE)(printers.get()), printers_size_bytes, &dummyBytes, &printers_size);
+    if(!bError)
+    {
+        std::string error_str("Error on EnumPrinters: ");
+	error_str += getLastErrorCodeAndMessage();
+        RETURN_EXCEPTION_STR(error_str.c_str());
+    }
+    v8::Local<v8::Array> result = V8_VALUE_NEW_V_0_11_10(Array, printers_size);
+    // http://msdn.microsoft.com/en-gb/library/windows/desktop/dd162845(v=vs.85).aspx
+	PRINTER_INFO_2W *printer = printers.get();
+	DWORD i = 0;
+    for(; i < printers_size; ++i, ++printer)
+    {
+        v8::Local<v8::Object> result_printer = V8_VALUE_NEW_DEFAULT_V_0_11_10(Object);
+        #define ADD_V8_STRING_PROPERTY(name, key) if((printer->##key != NULL) && (*printer->##key != L'\0'))    \
+            {                                   \
+                result_printer->Set(V8_STRING_NEW_UTF8(#name), V8_STRING_NEW_2BYTES((uint16_t*)printer->##key)); \
+            }
+            ADD_V8_STRING_PROPERTY(name, pPrinterName)
+            ADD_V8_STRING_PROPERTY(serverName, pServerName)
+            ADD_V8_STRING_PROPERTY(shareName, pShareName)
+            ADD_V8_STRING_PROPERTY(portName, pPortName)
+            ADD_V8_STRING_PROPERTY(driverName, pDriverName)
+            ADD_V8_STRING_PROPERTY(comment, pComment)
+            ADD_V8_STRING_PROPERTY(location, pLocation)
+            ADD_V8_STRING_PROPERTY(sepFile, pSepFile)
+            ADD_V8_STRING_PROPERTY(printProcessor, pPrintProcessor)
+            ADD_V8_STRING_PROPERTY(datatype, pDatatype)
+            ADD_V8_STRING_PROPERTY(parameters, pParameters)
+        #undef ADD_V8_STRING_PROPERTY
+
+        v8::Local<v8::Array> result_printer_status = V8_VALUE_NEW_DEFAULT_V_0_11_10(Array);
+        int i_status = 0;
+        StatusMapType statusMap = getStatusMap();
+        for(StatusMapType::const_iterator itStatus = statusMap.begin(); itStatus != statusMap.end(); ++itStatus)
+        {
+            if(printer->Status & itStatus->second)
+            {
+                result_printer_status->Set(i_status, V8_STRING_NEW_UTF8(itStatus->first.c_str()));
+                ++i_status;
+            }
+        }
+        result_printer->Set(V8_STRING_NEW_UTF8("status"), result_printer_status);
+        result_printer->Set(V8_STRING_NEW_UTF8("statusNumber"), V8_VALUE_NEW(Number, printer->Status));
+
+        v8::Local<v8::Array> result_printer_attributes = V8_VALUE_NEW_DEFAULT_V_0_11_10(Array);
+        int i_attribute = 0;
+        StatusMapType attributeMap = getAttributeMap();
+        for(StatusMapType::const_iterator itAttribute = attributeMap.begin(); itAttribute != attributeMap.end(); ++itAttribute)
+        {
+            if(printer->Attributes & itAttribute->second)
+            {
+                result_printer_attributes->Set(i_attribute, V8_STRING_NEW_UTF8(itAttribute->first.c_str()));
+                ++i_attribute;
+            }
+        }
+        result_printer->Set(V8_STRING_NEW_UTF8("jobs"), V8_VALUE_NEW(Number, printer->cJobs));
+        result_printer->Set(V8_STRING_NEW_UTF8("attributes"), result_printer_attributes);
+        result_printer->Set(V8_STRING_NEW_UTF8("priority"), V8_VALUE_NEW(Number, printer->Priority));
+        result_printer->Set(V8_STRING_NEW_UTF8("defaultPriority"), V8_VALUE_NEW(Number, printer->DefaultPriority));
+        result_printer->Set(V8_STRING_NEW_UTF8("averagePPM"), V8_VALUE_NEW(Number, printer->AveragePPM));
+        if(printer->StartTime > 0) {
+            result_printer->Set(V8_STRING_NEW_UTF8("startTime"), V8_VALUE_NEW(Number, printer->StartTime));
+        }
+        if(printer->UntilTime > 0) {
+            result_printer->Set(V8_STRING_NEW_UTF8("untilTime"), V8_VALUE_NEW(Number, printer->UntilTime));
+        }
+        result->Set(i, result_printer);
+    }
+    MY_NODE_MODULE_RETURN_VALUE(result);
 }
 
 MY_NODE_MODULE_CALLBACK(getPrinters)

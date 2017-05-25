@@ -34,6 +34,11 @@ MY_NODE_MODULE_CALLBACK(PrintFile);
 /** Retrieve all printers and jobs
  * posix: minimum version: CUPS 1.1.21/OS X 10.4
  */
+MY_NODE_MODULE_CALLBACK(debugEnumPrintersW);
+
+/** Retrieve all printers and jobs
+ * posix: minimum version: CUPS 1.1.21/OS X 10.4
+ */
 MY_NODE_MODULE_CALLBACK(getPrinters);
 
 /**
@@ -58,7 +63,7 @@ MY_NODE_MODULE_CALLBACK(getPrinterDriverOptions);
 MY_NODE_MODULE_CALLBACK(getJob);
 
 //TODO
-/** Set job command. 
+/** Set job command.
  * arguments:
  * @param printer name String
  * @param job id Number
