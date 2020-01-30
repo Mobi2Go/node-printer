@@ -37,6 +37,73 @@ const ChangeEventMapType& getChangeEventMap()
     return ret;
 }
 
+v8::Local<v8::Array> getEventNames(DWORD eventCode)
+{
+    v8::Isolate* isolate = v8::Isolate::GetCurrent();
+    v8::Local<v8::Array> result = v8::Array::New(isolate);
+    int i = 0;
+
+    if (eventCode & PRINTER_CHANGE_ADD_FORM) {
+        result->Set(i++, Nan::New("PRINTER_CHANGE_ADD_FORM").ToLocalChecked());
+    }
+    if (eventCode & PRINTER_CHANGE_ADD_JOB) {
+        result->Set(i++, Nan::New("PRINTER_CHANGE_ADD_JOB").ToLocalChecked());
+    }
+    if (eventCode & PRINTER_CHANGE_ADD_PORT) {
+        result->Set(i++, Nan::New("PRINTER_CHANGE_ADD_PORT").ToLocalChecked());
+    }
+    if (eventCode & PRINTER_CHANGE_ADD_PRINT_PROCESSOR) {
+        result->Set(i++, Nan::New("PRINTER_CHANGE_ADD_PRINT_PROCESSOR").ToLocalChecked());
+    }
+    if (eventCode & PRINTER_CHANGE_ADD_PRINTER_DRIVER) {
+        result->Set(i++, Nan::New("PRINTER_CHANGE_ADD_PRINTER_DRIVER").ToLocalChecked());
+    }
+    if (eventCode & PRINTER_CHANGE_CONFIGURE_PORT) {
+        result->Set(i++, Nan::New("PRINTER_CHANGE_CONFIGURE_PORT").ToLocalChecked());
+    }
+    if (eventCode & PRINTER_CHANGE_DELETE_FORM) {
+        result->Set(i++, Nan::New("PRINTER_CHANGE_DELETE_FORM").ToLocalChecked());
+    }
+    if (eventCode & PRINTER_CHANGE_DELETE_JOB) {
+        result->Set(i++, Nan::New("PRINTER_CHANGE_DELETE_JOB").ToLocalChecked());
+    }
+    if (eventCode & PRINTER_CHANGE_DELETE_PORT) {
+        result->Set(i++, Nan::New("PRINTER_CHANGE_DELETE_PORT").ToLocalChecked());
+    }
+    if (eventCode & PRINTER_CHANGE_DELETE_PRINT_PROCESSOR) {
+        result->Set(i++, Nan::New("PRINTER_CHANGE_DELETE_PRINT_PROCESSOR").ToLocalChecked());
+    }
+    if (eventCode & PRINTER_CHANGE_DELETE_PRINTER) {
+        result->Set(i++, Nan::New("PRINTER_CHANGE_DELETE_PRINTER").ToLocalChecked());
+    }
+    if (eventCode & PRINTER_CHANGE_DELETE_PRINTER_DRIVER) {
+        result->Set(i++, Nan::New("PRINTER_CHANGE_DELETE_PRINTER_DRIVER").ToLocalChecked());
+    }
+    if (eventCode & PRINTER_CHANGE_FAILED_CONNECTION_PRINTER) {
+        result->Set(i++, Nan::New("PRINTER_CHANGE_FAILED_CONNECTION_PRINTER").ToLocalChecked());
+    }
+    if (eventCode & PRINTER_CHANGE_SET_FORM) {
+        result->Set(i++, Nan::New("PRINTER_CHANGE_SET_FORM").ToLocalChecked());
+    }
+    if (eventCode & PRINTER_CHANGE_SET_JOB) {
+        result->Set(i++, Nan::New("PRINTER_CHANGE_SET_JOB").ToLocalChecked());
+    }
+    if (eventCode & PRINTER_CHANGE_SET_PRINTER) {
+        result->Set(i++, Nan::New("PRINTER_CHANGE_SET_PRINTER").ToLocalChecked());
+    }
+    if (eventCode & PRINTER_CHANGE_SET_PRINTER_DRIVER) {
+        result->Set(i++, Nan::New("PRINTER_CHANGE_SET_PRINTER_DRIVER").ToLocalChecked());
+    }
+    if (eventCode & PRINTER_CHANGE_WRITE_JOB) {
+        result->Set(i++, Nan::New("PRINTER_CHANGE_WRITE_JOB").ToLocalChecked());
+    }
+    if (eventCode & PRINTER_CHANGE_TIMEOUT) {
+        result->Set(i++, Nan::New("PRINTER_CHANGE_TIMEOUT").ToLocalChecked());
+    }
+
+    return result;
+}
+
 v8::Local<v8::String> getEventName(DWORD eventCode)
 {
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
@@ -45,6 +112,140 @@ v8::Local<v8::String> getEventName(DWORD eventCode)
         return V8_STRING_NEW_UTF8("UNKOWN_EVENT");
     }
     return V8_STRING_NEW_UTF8(it->second.c_str());
+}
+
+/*
+ * Printer Field Map
+ */
+typedef std::map<DWORD, std::string> NotifyInfoDataPrinterFieldMap;
+
+const NotifyInfoDataPrinterFieldMap& getNotifyInfoDataPrinterFieldMap()
+{
+    static NotifyInfoDataPrinterFieldMap ret;
+    if (ret.empty()) {
+        #define ADD_FIELD(value, str) ret.insert(std::pair<DWORD, std::string>(value, str));
+        ADD_FIELD(PRINTER_NOTIFY_FIELD_SERVER_NAME, "server_name");
+        ADD_FIELD(PRINTER_NOTIFY_FIELD_PRINTER_NAME, "printer_name");
+        ADD_FIELD(PRINTER_NOTIFY_FIELD_SHARE_NAME, "share_name");
+        ADD_FIELD(PRINTER_NOTIFY_FIELD_PORT_NAME, "port_name");
+        ADD_FIELD(PRINTER_NOTIFY_FIELD_DRIVER_NAME, "driver_name");
+        ADD_FIELD(PRINTER_NOTIFY_FIELD_COMMENT, "comment");
+        ADD_FIELD(PRINTER_NOTIFY_FIELD_LOCATION, "location");
+        ADD_FIELD(PRINTER_NOTIFY_FIELD_DEVMODE, "devmode");
+        ADD_FIELD(PRINTER_NOTIFY_FIELD_SEPFILE, "sepfile");
+        ADD_FIELD(PRINTER_NOTIFY_FIELD_PRINT_PROCESSOR, "print_processor");
+        ADD_FIELD(PRINTER_NOTIFY_FIELD_PARAMETERS, "parameters");
+        ADD_FIELD(PRINTER_NOTIFY_FIELD_DATATYPE, "datatype");
+        ADD_FIELD(PRINTER_NOTIFY_FIELD_SECURITY_DESCRIPTOR, "security_descriptor");
+        ADD_FIELD(PRINTER_NOTIFY_FIELD_ATTRIBUTES, "attributes");
+        ADD_FIELD(PRINTER_NOTIFY_FIELD_PRIORITY, "priority");
+        ADD_FIELD(PRINTER_NOTIFY_FIELD_DEFAULT_PRIORITY, "default_priority");
+        ADD_FIELD(PRINTER_NOTIFY_FIELD_START_TIME, "start_time");
+        ADD_FIELD(PRINTER_NOTIFY_FIELD_UNTIL_TIME, "until_time");
+        ADD_FIELD(PRINTER_NOTIFY_FIELD_STATUS, "status");
+        ADD_FIELD(PRINTER_NOTIFY_FIELD_CJOBS, "jobs_count");
+        ADD_FIELD(PRINTER_NOTIFY_FIELD_AVERAGE_PPM, "average_ppm");
+        #undef ADD_FIELD
+    }
+    return ret;
+}
+
+v8::Local<v8::String> getPrinterFieldName(DWORD fieldCode)
+{
+    v8::Isolate* isolate = v8::Isolate::GetCurrent();
+    auto it = getNotifyInfoDataPrinterFieldMap().find(fieldCode);
+    if (it == getNotifyInfoDataPrinterFieldMap().end()) {
+        return V8_STRING_NEW_UTF8("UNKOWN_FIELD");
+    }
+    return V8_STRING_NEW_UTF8(it->second.c_str());
+}
+
+/*
+ * Printer Status Names
+ */
+v8::Local<v8::Array> getPrinterStatusNames(DWORD status)
+{
+    v8::Isolate* isolate = v8::Isolate::GetCurrent();
+    v8::Local<v8::Array> result = v8::Array::New(isolate);
+    int i = 0;
+
+    if (status & PRINTER_STATUS_BUSY) {
+        result->Set(i++, Nan::New("PRINTER_STATUS_BUSY").ToLocalChecked());
+    }
+    if (status & PRINTER_STATUS_DOOR_OPEN) {
+        result->Set(i++, Nan::New("PRINTER_STATUS_DOOR_OPEN").ToLocalChecked());
+    }
+    if (status & PRINTER_STATUS_ERROR) {
+        result->Set(i++, Nan::New("PRINTER_STATUS_ERROR").ToLocalChecked());
+    }
+    if (status & PRINTER_STATUS_INITIALIZING) {
+        result->Set(i++, Nan::New("PRINTER_STATUS_INITIALIZING").ToLocalChecked());
+    }
+    if (status & PRINTER_STATUS_IO_ACTIVE) {
+        result->Set(i++, Nan::New("PRINTER_STATUS_IO_ACTIVE").ToLocalChecked());
+    }
+    if (status & PRINTER_STATUS_MANUAL_FEED) {
+        result->Set(i++, Nan::New("PRINTER_STATUS_MANUAL_FEED").ToLocalChecked());
+    }
+    if (status & PRINTER_STATUS_NO_TONER) {
+        result->Set(i++, Nan::New("PRINTER_STATUS_NO_TONER").ToLocalChecked());
+    }
+    if (status & PRINTER_STATUS_NOT_AVAILABLE) {
+        result->Set(i++, Nan::New("PRINTER_STATUS_NOT_AVAILABLE").ToLocalChecked());
+    }
+    if (status & PRINTER_STATUS_OFFLINE) {
+        result->Set(i++, Nan::New("PRINTER_STATUS_OFFLINE").ToLocalChecked());
+    }
+    if (status & PRINTER_STATUS_OUT_OF_MEMORY) {
+        result->Set(i++, Nan::New("PRINTER_STATUS_OUT_OF_MEMORY").ToLocalChecked());
+    }
+    if (status & PRINTER_STATUS_OUTPUT_BIN_FULL) {
+        result->Set(i++, Nan::New("PRINTER_STATUS_OUTPUT_BIN_FULL").ToLocalChecked());
+    }
+    if (status & PRINTER_STATUS_PAGE_PUNT) {
+        result->Set(i++, Nan::New("PRINTER_STATUS_PAGE_PUNT").ToLocalChecked());
+    }
+    if (status & PRINTER_STATUS_PAPER_JAM) {
+        result->Set(i++, Nan::New("PRINTER_STATUS_PAPER_JAM").ToLocalChecked());
+    }
+    if (status & PRINTER_STATUS_PAPER_OUT) {
+        result->Set(i++, Nan::New("PRINTER_STATUS_PAPER_OUT").ToLocalChecked());
+    }
+    if (status & PRINTER_STATUS_PAPER_PROBLEM) {
+        result->Set(i++, Nan::New("PRINTER_STATUS_PAPER_PROBLEM").ToLocalChecked());
+    }
+    if (status & PRINTER_STATUS_PAUSED) {
+        result->Set(i++, Nan::New("PRINTER_STATUS_PAUSED").ToLocalChecked());
+    }
+    if (status & PRINTER_STATUS_PENDING_DELETION) {
+        result->Set(i++, Nan::New("PRINTER_STATUS_PENDING_DELETION").ToLocalChecked());
+    }
+    if (status & PRINTER_STATUS_POWER_SAVE) {
+        result->Set(i++, Nan::New("PRINTER_STATUS_POWER_SAVE").ToLocalChecked());
+    }
+    if (status & PRINTER_STATUS_PRINTING) {
+        result->Set(i++, Nan::New("PRINTER_STATUS_PRINTING").ToLocalChecked());
+    }
+    if (status & PRINTER_STATUS_PROCESSING) {
+        result->Set(i++, Nan::New("PRINTER_STATUS_PROCESSING").ToLocalChecked());
+    }
+    if (status & PRINTER_STATUS_SERVER_UNKNOWN) {
+        result->Set(i++, Nan::New("PRINTER_STATUS_SERVER_UNKNOWN").ToLocalChecked());
+    }
+    if (status & PRINTER_STATUS_TONER_LOW) {
+        result->Set(i++, Nan::New("PRINTER_STATUS_TONER_LOW").ToLocalChecked());
+    }
+    if (status & PRINTER_STATUS_USER_INTERVENTION) {
+        result->Set(i++, Nan::New("PRINTER_STATUS_USER_INTERVENTION").ToLocalChecked());
+    }
+    if (status & PRINTER_STATUS_WAITING) {
+        result->Set(i++, Nan::New("PRINTER_STATUS_WAITING").ToLocalChecked());
+    }
+    if (status & PRINTER_STATUS_WARMING_UP) {
+        result->Set(i++, Nan::New("PRINTER_STATUS_WARMING_UP").ToLocalChecked());
+    }
+
+    return result;
 }
 
 /*
@@ -86,7 +287,7 @@ const NotifyInfoDataJobFieldMap& getNotifyInfoDataJobFieldMap()
     return ret;
 }
 
-v8::Local<v8::String> getFieldName(DWORD fieldCode)
+v8::Local<v8::String> getJobFieldName(DWORD fieldCode)
 {
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
     auto it = getNotifyInfoDataJobFieldMap().find(fieldCode);
@@ -97,40 +298,52 @@ v8::Local<v8::String> getFieldName(DWORD fieldCode)
 }
 
 /*
- * Job Status Map
+ * Job Status Names
  */
-typedef std::map<DWORD, std::string> JobStatusMap;
-
-const JobStatusMap& getJobStatusMap()
-{
-    static JobStatusMap ret;
-    if (ret.empty()) {
-        #define ADD_STATUS(value, str) ret.insert(std::pair<DWORD, std::string>(value, str));
-        ADD_STATUS(JOB_STATUS_BLOCKED_DEVQ, "JOB_STATUS_BLOCKED_DEVQ");
-        ADD_STATUS(JOB_STATUS_DELETED, "JOB_STATUS_DELETED");
-        ADD_STATUS(JOB_STATUS_DELETING, "JOB_STATUS_DELETING");
-        ADD_STATUS(JOB_STATUS_ERROR, "JOB_STATUS_ERROR");
-        ADD_STATUS(JOB_STATUS_OFFLINE, "JOB_STATUS_OFFLINE");
-        ADD_STATUS(JOB_STATUS_PAPEROUT, "JOB_STATUS_PAPEROUT");
-        ADD_STATUS(JOB_STATUS_PAUSED, "JOB_STATUS_PAUSED");
-        ADD_STATUS(JOB_STATUS_PRINTED, "JOB_STATUS_PRINTED");
-        ADD_STATUS(JOB_STATUS_PRINTING, "JOB_STATUS_PRINTING");
-        ADD_STATUS(JOB_STATUS_RESTART, "JOB_STATUS_RESTART");
-        ADD_STATUS(JOB_STATUS_SPOOLING, "JOB_STATUS_SPOOLING");
-        ADD_STATUS(JOB_STATUS_USER_INTERVENTION, "JOB_STATUS_USER_INTERVENTION");
-        #undef ADD_STATUS
-    }
-    return ret;
-}
-
-v8::Local<v8::String> getJobStatusName(DWORD statusCode)
+v8::Local<v8::Array> getJobStatusNames(DWORD status)
 {
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
-    auto it = getJobStatusMap().find(statusCode);
-    if (it == getJobStatusMap().end()) {
-        return V8_STRING_NEW_UTF8("UNKOWN_STATUS");
+    v8::Local<v8::Array> result = v8::Array::New(isolate);
+    int i = 0;
+
+    if (status & JOB_STATUS_BLOCKED_DEVQ) {
+        result->Set(i++, Nan::New("JOB_STATUS_BLOCKED_DEVQ").ToLocalChecked());
     }
-    return V8_STRING_NEW_UTF8(it->second.c_str());
+    if (status & JOB_STATUS_DELETED) {
+        result->Set(i++, Nan::New("JOB_STATUS_DELETED").ToLocalChecked());
+    }
+    if (status & JOB_STATUS_DELETING) {
+        result->Set(i++, Nan::New("JOB_STATUS_DELETING").ToLocalChecked());
+    }
+    if (status & JOB_STATUS_ERROR) {
+        result->Set(i++, Nan::New("JOB_STATUS_ERROR").ToLocalChecked());
+    }
+    if (status & JOB_STATUS_OFFLINE) {
+        result->Set(i++, Nan::New("JOB_STATUS_OFFLINE").ToLocalChecked());
+    }
+    if (status & JOB_STATUS_PAPEROUT) {
+        result->Set(i++, Nan::New("JOB_STATUS_PAPEROUT").ToLocalChecked());
+    }
+    if (status & JOB_STATUS_PAUSED) {
+        result->Set(i++, Nan::New("JOB_STATUS_PAUSED").ToLocalChecked());
+    }
+    if (status & JOB_STATUS_PRINTED) {
+        result->Set(i++, Nan::New("JOB_STATUS_PRINTED").ToLocalChecked());
+    }
+    if (status & JOB_STATUS_PRINTING) {
+        result->Set(i++, Nan::New("JOB_STATUS_PRINTING").ToLocalChecked());
+    }
+    if (status & JOB_STATUS_RESTART) {
+        result->Set(i++, Nan::New("JOB_STATUS_RESTART").ToLocalChecked());
+    }
+    if (status & JOB_STATUS_SPOOLING) {
+        result->Set(i++, Nan::New("JOB_STATUS_SPOOLING").ToLocalChecked());
+    }
+    if (status & JOB_STATUS_USER_INTERVENTION) {
+        result->Set(i++, Nan::New("JOB_STATUS_USER_INTERVENTION").ToLocalChecked());
+    }
+
+    return result;
 }
 
 #endif

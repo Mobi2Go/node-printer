@@ -19,7 +19,7 @@ WORD pPrinterNotifyFields[4] = {
     PRINTER_NOTIFY_FIELD_PRINTER_NAME,
     PRINTER_NOTIFY_FIELD_STATUS,
     PRINTER_NOTIFY_FIELD_CJOBS,
-    PRINTER_NOTIFY_FIELD_PAGES_PRINTED
+    PRINTER_NOTIFY_FIELD_PORT_NAME
 };
 
 WORD pJobNotifyFields[4] = {
@@ -27,24 +27,17 @@ WORD pJobNotifyFields[4] = {
     JOB_NOTIFY_FIELD_MACHINE_NAME,
     JOB_NOTIFY_FIELD_STATUS,
     JOB_NOTIFY_FIELD_DOCUMENT
-    // JOB_NOTIFY_FIELD_STATUS_STRING,
-    // JOB_NOTIFY_FIELD_POSITION,
-    // JOB_NOTIFY_FIELD_SUBMITTED,
-    // JOB_NOTIFY_FIELD_START_TIME,
-    // JOB_NOTIFY_FIELD_TIME,
-    // JOB_NOTIFY_FIELD_TOTAL_BYTES,
-    // JOB_NOTIFY_FIELD_BYTES_PRINTED
 };
 
-PRINTER_NOTIFY_OPTIONS_TYPE pPrinterNotifyOptionsTypes[1] = {
-    // {
-    //     0, // Type
-    //     0,
-    //     0,
-    //     0,
-    //     4, // Count
-    //     pPrinterNotifyFields
-    // },
+PRINTER_NOTIFY_OPTIONS_TYPE pPrinterNotifyOptionsTypes[2] = {
+    {
+        0, // Type
+        0,
+        0,
+        0,
+        4, // Count
+        pPrinterNotifyFields
+    },
     {
         1, // Type
         0,
@@ -58,11 +51,16 @@ PRINTER_NOTIFY_OPTIONS_TYPE pPrinterNotifyOptionsTypes[1] = {
 PRINTER_NOTIFY_OPTIONS pPrinterNotifyOptions = {
     2, // Version
     PRINTER_NOTIFY_OPTIONS_REFRESH, // Flag
-    1, // Count
+    2, // Count
     pPrinterNotifyOptionsTypes, // pTypes
 };
 
-class NotificationWorker : public Nan::AsyncProgressWorker
+typedef struct _ProgressData {
+    DWORD code;
+    LPVOID data;
+} ProgressData;
+
+class NotificationWorker : public Nan::AsyncProgressWorkerBase<ProgressData>
 {
 private:
     std::string printerName;
@@ -75,7 +73,7 @@ private:
 
 public:
     NotificationWorker(std::string printerName, Nan::Callback *callback)
-        : Nan::AsyncProgressWorker(callback),
+        : Nan::AsyncProgressWorkerBase<ProgressData>(callback),
             printerName(printerName),
             error(0),
             eventCode(0),
@@ -99,7 +97,7 @@ public:
         this->stopRequested = true;
     }
 
-    void Execute (const Nan::AsyncProgressWorker::ExecutionProgress& progress) {
+    void Execute (const Nan::AsyncProgressWorkerBase<ProgressData>::ExecutionProgress& progress) {
         std::wstring wPrinterName = std::wstring(this->printerName.begin(), this->printerName.end());
 
         if (!OpenPrinterW((LPWSTR)(wPrinterName.c_str()), &this->hPrinter, NULL)) {
@@ -127,12 +125,9 @@ public:
         while (bKeepMonitoring && !this->stopRequested) {
             DWORD waitResult = WaitForSingleObject(this->hNotification, 500);
             if (waitResult == 0) {
-                if (this->eventData) {
-                    FreePrinterNotifyInfo((PPRINTER_NOTIFY_INFO) this->eventData);
-                    this->eventData = NULL;
-                }
-                if (FindNextPrinterChangeNotification(this->hNotification, &this->eventCode, &pPrinterNotifyOptions, &this->eventData)) {
-                    progress.Send(NULL, 0);
+                ProgressData progressData;
+                if (FindNextPrinterChangeNotification(this->hNotification, &progressData.code, &pPrinterNotifyOptions, &progressData.data)) {
+                    progress.Send(&progressData, 1);
                 } else {
                     this->SetErrorMessage("GET_NOTIFICATION_ERROR");
                     this->error = GetLastError();
@@ -155,25 +150,39 @@ public:
         this->hPrinter = INVALID_HANDLE_VALUE;
     }
 
-    void HandleProgressCallback(const char *_data, size_t count)
+    void HandleProgressCallback(const ProgressData *progressData, size_t count)
     {
         Nan::HandleScope scope;
         MY_NODE_MODULE_ISOLATE_DECL
 
         v8::Local<v8::Object> result = v8::Object::New(MY_NODE_MODULE_ISOLATE);
         result->Set(V8_STRING_NEW_UTF8("type"), V8_STRING_NEW_UTF8("event"));
-        result->Set(V8_STRING_NEW_UTF8("event_code"), v8::Number::New(MY_NODE_MODULE_ISOLATE, this->eventCode));
-        result->Set(V8_STRING_NEW_UTF8("event"), getEventName(this->eventCode));
+        result->Set(V8_STRING_NEW_UTF8("event_code"), v8::Number::New(MY_NODE_MODULE_ISOLATE, progressData->code));
+        result->Set(V8_STRING_NEW_UTF8("event"), getEventNames(progressData->code));
 
-        PPRINTER_NOTIFY_INFO data = (PPRINTER_NOTIFY_INFO) this->eventData;
+        PPRINTER_NOTIFY_INFO data = (PPRINTER_NOTIFY_INFO) progressData->data;
 
         std::map<DWORD, v8::Local<v8::Object>> jobs;
+        v8::Local<v8::Object> printer = v8::Object::New(MY_NODE_MODULE_ISOLATE);
+        result->Set(V8_STRING_NEW_UTF8("printer"), printer);
         DWORD i = 0;
         while (i < data->Count) {
             PRINTER_NOTIFY_INFO_DATA info_data = data->aData[i];
 
             if (info_data.Type == 0) {
                 // Printer event
+                switch (info_data.Field) {
+                    case PRINTER_NOTIFY_FIELD_PRINTER_NAME:
+                    case PRINTER_NOTIFY_FIELD_PORT_NAME:
+                        printer->Set(getPrinterFieldName(info_data.Field), v8::String::NewFromTwoByte(MY_NODE_MODULE_ISOLATE, (const uint16_t*)info_data.NotifyData.Data.pBuf));
+                        break;
+                    case PRINTER_NOTIFY_FIELD_STATUS:
+                        printer->Set(getPrinterFieldName(info_data.Field), getPrinterStatusNames(info_data.NotifyData.adwData[0]));
+                        break;
+                    case PRINTER_NOTIFY_FIELD_CJOBS:
+                        printer->Set(getPrinterFieldName(info_data.Field), Nan::New((unsigned int)info_data.NotifyData.adwData[0]));
+                        break;
+                }
             }
             if (info_data.Type == 1) {
                 // Job event
@@ -198,10 +207,10 @@ public:
                     case JOB_NOTIFY_FIELD_DRIVER_NAME:
                     case JOB_NOTIFY_FIELD_STATUS_STRING:
                     case JOB_NOTIFY_FIELD_DOCUMENT:
-                        job->Set(getFieldName(info_data.Field), v8::String::NewFromTwoByte(MY_NODE_MODULE_ISOLATE, (const uint16_t*)info_data.NotifyData.Data.pBuf));
+                        job->Set(getJobFieldName(info_data.Field), v8::String::NewFromTwoByte(MY_NODE_MODULE_ISOLATE, (const uint16_t*)info_data.NotifyData.Data.pBuf));
                         break;
                     case JOB_NOTIFY_FIELD_STATUS:
-                        job->Set(getFieldName(info_data.Field), getJobStatusName(info_data.NotifyData.adwData[0]));
+                        job->Set(getJobFieldName(info_data.Field), getJobStatusNames(info_data.NotifyData.adwData[0]));
                         break;
                 }
             }
@@ -224,6 +233,10 @@ public:
             Nan::Null(),
             result
         };
+
+        if (progressData->data) {
+            FreePrinterNotifyInfo((PPRINTER_NOTIFY_INFO) progressData->data);
+        }
 
         this->callback->Call(2, argv, this->async_resource);
     }
