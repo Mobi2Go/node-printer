@@ -1,4 +1,5 @@
 #include "node_printer.hpp"
+#include "node_printer_notification_worker.hpp"
 
 #if _MSC_VER
 #include <windows.h>
@@ -29,7 +30,7 @@ namespace{
         MemValue(const DWORD iSizeKbytes) {
             _value = (Type*)malloc(iSizeKbytes);
         }
-		
+
         ~MemValue () {
             free();
         }
@@ -745,4 +746,75 @@ MY_NODE_MODULE_CALLBACK(PrintFile)
 {
     MY_NODE_MODULE_HANDLESCOPE;
     RETURN_EXCEPTION_STR("Not yet implemented on Windows");
+}
+
+struct cmp_by_value {
+    bool operator()(const Nan::Callback *a, const Nan::Callback *b) const
+    {
+        return *a != *b;
+    }
+};
+
+static std::map<std::string, std::map<Nan::Callback*, NotificationWorker*, cmp_by_value>*> printerCallbacks;
+
+NAN_METHOD(addPrinterEventListener)
+{
+    Nan::HandleScope scope;
+
+    if (info.Length() != 2 || !info[0]->IsString() || !info[1]->IsFunction()) {
+        return;
+    }
+
+    Nan::Utf8String printerName(info[0]);
+    Nan::Callback *eventCallback = new Nan::Callback(v8::Local<v8::Function>::Cast(info[1]));
+
+    auto printer = printerCallbacks.find(*printerName);
+    std::map<Nan::Callback*, NotificationWorker*, cmp_by_value> *callbacks;
+
+    if (printer != printerCallbacks.end()) {
+        callbacks = printer->second;
+    } else {
+        callbacks = new std::map<Nan::Callback*, NotificationWorker*, cmp_by_value>();
+        printerCallbacks.insert(std::pair<std::string, std::map<Nan::Callback*, NotificationWorker*, cmp_by_value>*>(*printerName, callbacks));
+    }
+
+    auto worker = callbacks->find(eventCallback);
+    if (worker != callbacks->end()) {
+        delete eventCallback;
+        info.GetReturnValue().Set(Nan::New(false));
+    } else {
+        NotificationWorker *worker = new NotificationWorker(*printerName, eventCallback);
+
+        callbacks->insert(std::pair<Nan::Callback*, NotificationWorker*>(eventCallback, worker));
+
+        Nan::AsyncQueueWorker(worker);
+
+        info.GetReturnValue().Set(Nan::New(true));
+    }
+}
+
+NAN_METHOD(removePrinterEventListener)
+{
+    Nan::HandleScope scope;
+
+    if (info.Length() != 2 || !info[0]->IsString() || !info[1]->IsFunction()) {
+        return;
+    }
+
+    info.GetReturnValue().Set(Nan::New(false));
+
+    Nan::Utf8String printerName(info[0]);
+    Nan::Callback *eventCallback = new Nan::Callback(v8::Local<v8::Function>::Cast(info[1]));
+
+    auto printer = printerCallbacks.find(*printerName);
+    if (printer != printerCallbacks.end()) {
+        auto callback = printer->second->find(eventCallback);
+        if (callback != printer->second->end()) {
+            callback->second->Stop();
+            printer->second->erase(callback);
+            info.GetReturnValue().Set(Nan::New(true));
+        }
+    }
+
+    delete eventCallback;
 }

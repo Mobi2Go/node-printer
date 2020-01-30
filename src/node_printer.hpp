@@ -58,7 +58,7 @@ MY_NODE_MODULE_CALLBACK(getPrinterDriverOptions);
 MY_NODE_MODULE_CALLBACK(getJob);
 
 //TODO
-/** Set job command. 
+/** Set job command.
  * arguments:
  * @param printer name String
  * @param job id Number
@@ -83,6 +83,10 @@ MY_NODE_MODULE_CALLBACK(getSupportedPrintFormats);
 /** Get supported job commands for setJob method
  */
 MY_NODE_MODULE_CALLBACK(getSupportedJobCommands);
+
+MY_NODE_MODULE_CALLBACK(addPrinterEventListener);
+
+MY_NODE_MODULE_CALLBACK(removePrinterEventListener);
 
 //TODO:
 // optional ability to get printer spool

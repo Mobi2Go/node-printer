@@ -45,7 +45,7 @@
 #  define V8_STRING_NEW_UTF8(value)   Nan::Utf8String(value)
 #  define V8_STRING_NEW_2BYTES(value)   v8::String::New(value)
 
-#  define RETURN_EXCEPTION(msg) return v8::ThrowException(Nan::Error(msg)) 
+#  define RETURN_EXCEPTION(msg) return v8::ThrowException(Nan::Error(msg))
 
 #  define RETURN_EXCEPTION_STR(msg) RETURN_EXCEPTION(V8_STRING_NEW_UTF8(msg))
 #  define MY_NODE_MODULE_RETURN_VALUE(value)   return scope.Close(value)
@@ -84,7 +84,7 @@
 
 #define V8_STR_CONC(left, right)                              \
 	v8::String::Concat(V8_STRING_NEW_UTF8(left), V8_STRING_NEW_UTF8(right))
-		
+
 #define REQUIRE_ARGUMENTS(args, n)                                                   \
     if (args.Length() < (n)) {                                                 \
         RETURN_EXCEPTION_STR("Expected " #n " arguments");                       \
@@ -104,7 +104,7 @@
     v8::Local<v8::Object> var = v8::Local<v8::Object>::Cast(args[i]);
 
 
-#define REQUIRE_ARGUMENT_FUNCTION(i, var)                                      \
+#define REQUIRE_ARGUMENT_FUNCTION(args, i, var)                                      \
     if (args.Length() <= (i) || !args[i]->IsFunction()) {                      \
         RETURN_EXCEPTION_STR("Argument " #i " must be a function");                 \
     }                                                                          \
