@@ -423,17 +423,17 @@ namespace{
         //LPDEVMODE            pDevMode;
         //PSECURITY_DESCRIPTOR pSecurityDescriptor;
 
-        if(printer->cJobs > 0)
-        {
-            v8::Local<v8::Array> result_printer_jobs = V8_VALUE_NEW(Array, printer->cJobs);
-            // get jobs
-            std::string error_str = retrieveAndParseJobs(printer->pPrinterName, printer->cJobs, result_printer_jobs, iPrinterHandle);
-            if(!error_str.empty())
-            {
-                return error_str;
-            }
-            MY_NODE_SET_OBJECT_PROP(result_printer, "jobs", result_printer_jobs);
-        }
+        // if(printer->cJobs > 0)
+        // {
+        //     v8::Local<v8::Array> result_printer_jobs = V8_VALUE_NEW(Array, printer->cJobs);
+        //     // get jobs
+        //     std::string error_str = retrieveAndParseJobs(printer->pPrinterName, printer->cJobs, result_printer_jobs, iPrinterHandle);
+        //     if(!error_str.empty())
+        //     {
+        //         return error_str;
+        //     }
+        //     MY_NODE_SET_OBJECT_PROP(result_printer, "jobs", result_printer_jobs);
+        // }
         return "";
     }
 }
