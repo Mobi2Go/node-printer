@@ -6,9 +6,9 @@
  */
 typedef std::map<DWORD, std::string> ChangeEventMapType;
 
-const ChangeEventMapType& getChangeEventMap()
+const ChangeEventMapType getChangeEventMap()
 {
-    static ChangeEventMapType ret;
+    ChangeEventMapType ret;
     if (ret.empty()) {
         #define ADD_CHANGE_EVENT(value, str) ret.insert(std::pair<DWORD, std::string>(value, str));
         ADD_CHANGE_EVENT(PRINTER_CHANGE_ADD_FORM, "PRINTER_CHANGE_ADD_FORM");
@@ -119,9 +119,9 @@ v8::Local<v8::String> getEventName(DWORD eventCode)
  */
 typedef std::map<DWORD, std::string> NotifyInfoDataPrinterFieldMap;
 
-const NotifyInfoDataPrinterFieldMap& getNotifyInfoDataPrinterFieldMap()
+const NotifyInfoDataPrinterFieldMap getNotifyInfoDataPrinterFieldMap()
 {
-    static NotifyInfoDataPrinterFieldMap ret;
+    NotifyInfoDataPrinterFieldMap ret;
     if (ret.empty()) {
         #define ADD_FIELD(value, str) ret.insert(std::pair<DWORD, std::string>(value, str));
         ADD_FIELD(PRINTER_NOTIFY_FIELD_SERVER_NAME, "server_name");
@@ -253,9 +253,9 @@ v8::Local<v8::Array> getPrinterStatusNames(DWORD status)
  */
 typedef std::map<DWORD, std::string> NotifyInfoDataJobFieldMap;
 
-const NotifyInfoDataJobFieldMap& getNotifyInfoDataJobFieldMap()
+const NotifyInfoDataJobFieldMap getNotifyInfoDataJobFieldMap()
 {
-    static NotifyInfoDataJobFieldMap ret;
+    NotifyInfoDataJobFieldMap ret;
     if (ret.empty()) {
         #define ADD_FIELD(value, str) ret.insert(std::pair<DWORD, std::string>(value, str));
         ADD_FIELD(JOB_NOTIFY_FIELD_PRINTER_NAME, "printer_name");

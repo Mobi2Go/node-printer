@@ -66,14 +66,9 @@ namespace{
         BOOL _ok;
     };
 
-    const StatusMapType& getStatusMap()
+    const StatusMapType getStatusMap()
     {
-        static StatusMapType result;
-        if(!result.empty())
-        {
-            return result;
-        }
-        // add only first time
+        StatusMapType result;
 #define STATUS_PRINTER_ADD(value, type) result.insert(std::make_pair(value, type))
         STATUS_PRINTER_ADD("BUSY", PRINTER_STATUS_BUSY);
         STATUS_PRINTER_ADD("DOOR-OPEN", PRINTER_STATUS_DOOR_OPEN);
@@ -104,14 +99,9 @@ namespace{
         return result;
     }
 
-    const StatusMapType& getJobStatusMap()
+    const StatusMapType getJobStatusMap()
     {
-        static StatusMapType result;
-        if(!result.empty())
-        {
-            return result;
-        }
-        // add only first time
+        StatusMapType result;
 #define STATUS_PRINTER_ADD(value, type) result.insert(std::make_pair(value, type))
         // Common statuses
         STATUS_PRINTER_ADD("PRINTING", JOB_STATUS_PRINTING);
@@ -140,14 +130,9 @@ namespace{
         return result;
     }
 
-    const StatusMapType& getAttributeMap()
+    const StatusMapType getAttributeMap()
     {
-        static StatusMapType result;
-        if(!result.empty())
-        {
-            return result;
-        }
-        // add only first time
+        StatusMapType result;
 #define ATTRIBUTE_PRINTER_ADD(value, type) result.insert(std::make_pair(value, type))
         ATTRIBUTE_PRINTER_ADD("DIRECT", PRINTER_ATTRIBUTE_DIRECT);
         ATTRIBUTE_PRINTER_ADD("DO-COMPLETE-FIRST", PRINTER_ATTRIBUTE_DO_COMPLETE_FIRST);
@@ -180,14 +165,9 @@ namespace{
         return result;
     }
 
-    const StatusMapType& getJobCommandMap()
+    const StatusMapType getJobCommandMap()
     {
-        static StatusMapType result;
-        if(!result.empty())
-        {
-            return result;
-        }
-        // add only first time
+        StatusMapType result;
 #define COMMAND_JOB_ADD(value, type) result.insert(std::make_pair(value, type))
         COMMAND_JOB_ADD("CANCEL", JOB_CONTROL_CANCEL);
         COMMAND_JOB_ADD("PAUSE", JOB_CONTROL_PAUSE);
