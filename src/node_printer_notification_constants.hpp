@@ -107,8 +107,9 @@ v8::Local<v8::Array> getEventNames(DWORD eventCode)
 v8::Local<v8::String> getEventName(DWORD eventCode)
 {
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
-    auto it = getChangeEventMap().find(eventCode);
-    if (it == getChangeEventMap().end()) {
+    auto m = getChangeEventMap();
+    auto it = m.find(eventCode);
+    if (it == m.end()) {
         return V8_STRING_NEW_UTF8("UNKOWN_EVENT");
     }
     return V8_STRING_NEW_UTF8(it->second.c_str());
@@ -153,8 +154,9 @@ const NotifyInfoDataPrinterFieldMap getNotifyInfoDataPrinterFieldMap()
 v8::Local<v8::String> getPrinterFieldName(DWORD fieldCode)
 {
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
-    auto it = getNotifyInfoDataPrinterFieldMap().find(fieldCode);
-    if (it == getNotifyInfoDataPrinterFieldMap().end()) {
+    auto m = getNotifyInfoDataPrinterFieldMap();
+    auto it = m.find(fieldCode);
+    if (it == m.end()) {
         return V8_STRING_NEW_UTF8("UNKOWN_FIELD");
     }
     return V8_STRING_NEW_UTF8(it->second.c_str());
@@ -290,8 +292,9 @@ const NotifyInfoDataJobFieldMap getNotifyInfoDataJobFieldMap()
 v8::Local<v8::String> getJobFieldName(DWORD fieldCode)
 {
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
-    auto it = getNotifyInfoDataJobFieldMap().find(fieldCode);
-    if (it == getNotifyInfoDataJobFieldMap().end()) {
+    auto m = getNotifyInfoDataJobFieldMap();
+    auto it = m.find(fieldCode);
+    if (it == m.end()) {
         return V8_STRING_NEW_UTF8("UNKOWN_FIELD");
     }
     return V8_STRING_NEW_UTF8(it->second.c_str());

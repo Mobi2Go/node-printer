@@ -211,7 +211,8 @@ namespace{
         //DWORD                Status;
         v8::Local<v8::Array> result_printer_job_status = V8_VALUE_NEW_DEFAULT(Array);
         int i_status = 0;
-        for(StatusMapType::const_iterator itStatus = getJobStatusMap().begin(); itStatus != getJobStatusMap().end(); ++itStatus)
+        StatusMapType jobStatusMap = getJobStatusMap();
+        for(StatusMapType::const_iterator itStatus = jobStatusMap.begin(); itStatus != jobStatusMap.end(); ++itStatus)
         {
             if(job->Status & itStatus->second)
             {
@@ -359,7 +360,8 @@ namespace{
         // http://msdn.microsoft.com/en-gb/library/windows/desktop/dd162845(v=vs.85).aspx
         v8::Local<v8::Array> result_printer_status = V8_VALUE_NEW_DEFAULT(Array);
         int i_status = 0;
-        for(StatusMapType::const_iterator itStatus = getStatusMap().begin(); itStatus != getStatusMap().end(); ++itStatus)
+        StatusMapType statusMap = getStatusMap();
+        for(StatusMapType::const_iterator itStatus = statusMap.begin(); itStatus != statusMap.end(); ++itStatus)
         {
             if(printer->Status & itStatus->second)
             {
@@ -371,7 +373,8 @@ namespace{
         //DWORD                Attributes;
         v8::Local<v8::Array> result_printer_attributes = V8_VALUE_NEW_DEFAULT(Array);
         int i_attribute = 0;
-        for(StatusMapType::const_iterator itAttribute = getAttributeMap().begin(); itAttribute != getAttributeMap().end(); ++itAttribute)
+        StatusMapType attributeMap = getAttributeMap();
+        for(StatusMapType::const_iterator itAttribute = attributeMap.begin(); itAttribute != attributeMap.end(); ++itAttribute)
         {
             if(printer->Attributes & itAttribute->second)
             {
@@ -573,8 +576,9 @@ MY_NODE_MODULE_CALLBACK(setJob)
         RETURN_EXCEPTION_STR("Wrong job number");
     }
     std::string jobCommandStr(*jobCommandV8);
-    StatusMapType::const_iterator itJobCommand = getJobCommandMap().find(jobCommandStr);
-    if(itJobCommand == getJobCommandMap().end())
+    StatusMapType jobCommandMap = getJobCommandMap();
+    StatusMapType::const_iterator itJobCommand = jobCommandMap.find(jobCommandStr);
+    if(itJobCommand == jobCommandMap.end())
     {
         RETURN_EXCEPTION_STR("wrong job command. use getSupportedJobCommands to see the possible commands");
     }
@@ -598,7 +602,8 @@ MY_NODE_MODULE_CALLBACK(getSupportedJobCommands)
     MY_NODE_MODULE_HANDLESCOPE;
     v8::Local<v8::Array> result = V8_VALUE_NEW_DEFAULT(Array);
     int i = 0;
-    for(StatusMapType::const_iterator itJob = getJobCommandMap().begin(); itJob != getJobCommandMap().end(); ++itJob)
+    StatusMapType jobCommandMap = getJobCommandMap();
+    for(StatusMapType::const_iterator itJob = jobCommandMap.begin(); itJob != jobCommandMap.end(); ++itJob)
     {
         MY_NODE_SET_OBJECT(result, i++, V8_STRING_NEW_UTF8(itJob->first.c_str()));
     }
@@ -735,7 +740,7 @@ struct cmp_by_value {
     }
 };
 
-static std::map<std::string, std::map<Nan::Callback*, NotificationWorker*, cmp_by_value>*> printerCallbacks;
+std::map<std::string, std::map<Nan::Callback*, NotificationWorker*, cmp_by_value>*> printerCallbacks;
 
 NAN_METHOD(addPrinterEventListener)
 {
