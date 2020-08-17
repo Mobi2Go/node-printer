@@ -156,15 +156,15 @@ public:
         MY_NODE_MODULE_ISOLATE_DECL
 
         v8::Local<v8::Object> result = v8::Object::New(MY_NODE_MODULE_ISOLATE);
-        result->Set(V8_STRING_NEW_UTF8("type"), V8_STRING_NEW_UTF8("event"));
-        result->Set(V8_STRING_NEW_UTF8("event_code"), v8::Number::New(MY_NODE_MODULE_ISOLATE, progressData->code));
-        result->Set(V8_STRING_NEW_UTF8("event"), getEventNames(progressData->code));
+        MY_NODE_SET_OBJECT(result, V8_STRING_NEW_UTF8("type"), V8_STRING_NEW_UTF8("event"));
+        MY_NODE_SET_OBJECT(result, V8_STRING_NEW_UTF8("event_code"), v8::Number::New(MY_NODE_MODULE_ISOLATE, progressData->code));
+        MY_NODE_SET_OBJECT(result, V8_STRING_NEW_UTF8("event"), getEventNames(progressData->code));
 
         PPRINTER_NOTIFY_INFO data = (PPRINTER_NOTIFY_INFO) progressData->data;
 
         std::map<DWORD, v8::Local<v8::Object>> jobs;
         v8::Local<v8::Object> printer = v8::Object::New(MY_NODE_MODULE_ISOLATE);
-        result->Set(V8_STRING_NEW_UTF8("printer"), printer);
+        MY_NODE_SET_OBJECT(result, V8_STRING_NEW_UTF8("printer"), printer);
         DWORD i = 0;
         while (i < data->Count) {
             PRINTER_NOTIFY_INFO_DATA info_data = data->aData[i];
@@ -174,13 +174,13 @@ public:
                 switch (info_data.Field) {
                     case PRINTER_NOTIFY_FIELD_PRINTER_NAME:
                     case PRINTER_NOTIFY_FIELD_PORT_NAME:
-                        printer->Set(getPrinterFieldName(info_data.Field), v8::String::NewFromTwoByte(MY_NODE_MODULE_ISOLATE, (const uint16_t*)info_data.NotifyData.Data.pBuf));
+                        MY_NODE_SET_OBJECT(printer, getPrinterFieldName(info_data.Field), v8::String::NewFromTwoByte(MY_NODE_MODULE_ISOLATE, (const uint16_t*)info_data.NotifyData.Data.pBuf).ToLocalChecked());
                         break;
                     case PRINTER_NOTIFY_FIELD_STATUS:
-                        printer->Set(getPrinterFieldName(info_data.Field), getPrinterStatusNames(info_data.NotifyData.adwData[0]));
+                        MY_NODE_SET_OBJECT(printer, getPrinterFieldName(info_data.Field), getPrinterStatusNames(info_data.NotifyData.adwData[0]));
                         break;
                     case PRINTER_NOTIFY_FIELD_CJOBS:
-                        printer->Set(getPrinterFieldName(info_data.Field), Nan::New((unsigned int)info_data.NotifyData.adwData[0]));
+                        MY_NODE_SET_OBJECT(printer, getPrinterFieldName(info_data.Field), Nan::New((unsigned int)info_data.NotifyData.adwData[0]));
                         break;
                 }
             }
@@ -190,7 +190,7 @@ public:
                 auto job_it = jobs.find(info_data.Id);
                 if (job_it == jobs.end()) {
                     job = v8::Object::New(MY_NODE_MODULE_ISOLATE);
-                    job->Set(V8_STRING_NEW_UTF8("id"), v8::Number::New(MY_NODE_MODULE_ISOLATE, info_data.Id));
+                    MY_NODE_SET_OBJECT(job, V8_STRING_NEW_UTF8("id"), v8::Number::New(MY_NODE_MODULE_ISOLATE, info_data.Id));
                     jobs.insert(std::pair<DWORD, v8::Local<v8::Object>>(info_data.Id, job));
                 } else {
                     job = job_it->second;
@@ -207,10 +207,10 @@ public:
                     case JOB_NOTIFY_FIELD_DRIVER_NAME:
                     case JOB_NOTIFY_FIELD_STATUS_STRING:
                     case JOB_NOTIFY_FIELD_DOCUMENT:
-                        job->Set(getJobFieldName(info_data.Field), v8::String::NewFromTwoByte(MY_NODE_MODULE_ISOLATE, (const uint16_t*)info_data.NotifyData.Data.pBuf));
+                        MY_NODE_SET_OBJECT(job, getJobFieldName(info_data.Field), v8::String::NewFromTwoByte(MY_NODE_MODULE_ISOLATE, (const uint16_t*)info_data.NotifyData.Data.pBuf).ToLocalChecked());
                         break;
                     case JOB_NOTIFY_FIELD_STATUS:
-                        job->Set(getJobFieldName(info_data.Field), getJobStatusNames(info_data.NotifyData.adwData[0]));
+                        MY_NODE_SET_OBJECT(job, getJobFieldName(info_data.Field), getJobStatusNames(info_data.NotifyData.adwData[0]));
                         break;
                 }
             }
@@ -222,11 +222,11 @@ public:
             auto it = jobs.begin();
             int i = 0;
             while (it != jobs.end()) {
-                jobs_array->Set(i, it->second);
+                MY_NODE_SET_OBJECT(jobs_array, i, it->second);
                 it++;
                 i++;
             }
-            result->Set(V8_STRING_NEW_UTF8("jobs"), jobs_array);
+            MY_NODE_SET_OBJECT(result, V8_STRING_NEW_UTF8("jobs"), jobs_array);
         }
 
         v8::Local<v8::Value> argv[] = {
@@ -246,7 +246,7 @@ public:
         MY_NODE_MODULE_ISOLATE_DECL
 
         v8::Local<v8::Object> result = v8::Object::New(MY_NODE_MODULE_ISOLATE);
-        result->Set(V8_STRING_NEW_UTF8("type"), V8_STRING_NEW_UTF8("complete"));
+        MY_NODE_SET_OBJECT(result, V8_STRING_NEW_UTF8("type"), V8_STRING_NEW_UTF8("complete"));
 
         v8::Local<v8::Value> argv[] = {
             Nan::Null(),

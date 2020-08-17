@@ -212,9 +212,9 @@ namespace{
         //Common fields
         //DWORD                JobId;
         MY_NODE_SET_OBJECT_PROP(result_printer_job, "id", V8_VALUE_NEW(Number, job->JobId));
-#define ADD_V8_STRING_PROPERTY(name, key) if((job->##key != NULL) && (*job->##key != L'\0'))    \
+#define ADD_V8_STRING_PROPERTY(name, key) if((job->key != NULL) && (*job->key != L'\0'))    \
         {                                   \
-            MY_NODE_SET_OBJECT_PROP(result_printer_job, #name, V8_STRING_NEW_2BYTES((uint16_t*)job->##key)); \
+            MY_NODE_SET_OBJECT_PROP(result_printer_job, #name, V8_STRING_NEW_2BYTES((uint16_t*)job->key)); \
         }
         //LPTSTR               pPrinterName;
         ADD_V8_STRING_PROPERTY(name, pPrinterName)
@@ -347,9 +347,9 @@ namespace{
     std::string parsePrinterInfo(const PRINTER_INFO_2W *printer, v8::Local<v8::Object> result_printer, PrinterHandle& iPrinterHandle)
     {
         MY_NODE_MODULE_ISOLATE_DECL
-    #define ADD_V8_STRING_PROPERTY(name, key) if((printer->##key != NULL) && (*printer->##key != L'\0'))    \
+    #define ADD_V8_STRING_PROPERTY(name, key) if((printer->key != NULL) && (*printer->key != L'\0'))    \
         {                                   \
-            MY_NODE_SET_OBJECT_PROP(result_printer, #name, V8_STRING_NEW_2BYTES((uint16_t*)printer->##key)); \
+            MY_NODE_SET_OBJECT_PROP(result_printer, #name, V8_STRING_NEW_2BYTES((uint16_t*)printer->key)); \
         }
         //LPTSTR               pPrinterName;
         ADD_V8_STRING_PROPERTY(name, pPrinterName)

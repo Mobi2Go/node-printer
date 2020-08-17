@@ -1,6 +1,8 @@
 #ifndef __NODE_PRINTER_NOTIFICATION_CONSTANTS_HPP__
 #define __NODE_PRINTER_NOTIFICATION_CONSTANTS_HPP__
 
+#include "macros.hh"
+
 /*
  * Change Event Map
  */
@@ -44,61 +46,61 @@ v8::Local<v8::Array> getEventNames(DWORD eventCode)
     int i = 0;
 
     if (eventCode & PRINTER_CHANGE_ADD_FORM) {
-        result->Set(i++, Nan::New("PRINTER_CHANGE_ADD_FORM").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_CHANGE_ADD_FORM").ToLocalChecked());
     }
     if (eventCode & PRINTER_CHANGE_ADD_JOB) {
-        result->Set(i++, Nan::New("PRINTER_CHANGE_ADD_JOB").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_CHANGE_ADD_JOB").ToLocalChecked());
     }
     if (eventCode & PRINTER_CHANGE_ADD_PORT) {
-        result->Set(i++, Nan::New("PRINTER_CHANGE_ADD_PORT").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_CHANGE_ADD_PORT").ToLocalChecked());
     }
     if (eventCode & PRINTER_CHANGE_ADD_PRINT_PROCESSOR) {
-        result->Set(i++, Nan::New("PRINTER_CHANGE_ADD_PRINT_PROCESSOR").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_CHANGE_ADD_PRINT_PROCESSOR").ToLocalChecked());
     }
     if (eventCode & PRINTER_CHANGE_ADD_PRINTER_DRIVER) {
-        result->Set(i++, Nan::New("PRINTER_CHANGE_ADD_PRINTER_DRIVER").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_CHANGE_ADD_PRINTER_DRIVER").ToLocalChecked());
     }
     if (eventCode & PRINTER_CHANGE_CONFIGURE_PORT) {
-        result->Set(i++, Nan::New("PRINTER_CHANGE_CONFIGURE_PORT").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_CHANGE_CONFIGURE_PORT").ToLocalChecked());
     }
     if (eventCode & PRINTER_CHANGE_DELETE_FORM) {
-        result->Set(i++, Nan::New("PRINTER_CHANGE_DELETE_FORM").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_CHANGE_DELETE_FORM").ToLocalChecked());
     }
     if (eventCode & PRINTER_CHANGE_DELETE_JOB) {
-        result->Set(i++, Nan::New("PRINTER_CHANGE_DELETE_JOB").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_CHANGE_DELETE_JOB").ToLocalChecked());
     }
     if (eventCode & PRINTER_CHANGE_DELETE_PORT) {
-        result->Set(i++, Nan::New("PRINTER_CHANGE_DELETE_PORT").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_CHANGE_DELETE_PORT").ToLocalChecked());
     }
     if (eventCode & PRINTER_CHANGE_DELETE_PRINT_PROCESSOR) {
-        result->Set(i++, Nan::New("PRINTER_CHANGE_DELETE_PRINT_PROCESSOR").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_CHANGE_DELETE_PRINT_PROCESSOR").ToLocalChecked());
     }
     if (eventCode & PRINTER_CHANGE_DELETE_PRINTER) {
-        result->Set(i++, Nan::New("PRINTER_CHANGE_DELETE_PRINTER").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_CHANGE_DELETE_PRINTER").ToLocalChecked());
     }
     if (eventCode & PRINTER_CHANGE_DELETE_PRINTER_DRIVER) {
-        result->Set(i++, Nan::New("PRINTER_CHANGE_DELETE_PRINTER_DRIVER").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_CHANGE_DELETE_PRINTER_DRIVER").ToLocalChecked());
     }
     if (eventCode & PRINTER_CHANGE_FAILED_CONNECTION_PRINTER) {
-        result->Set(i++, Nan::New("PRINTER_CHANGE_FAILED_CONNECTION_PRINTER").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_CHANGE_FAILED_CONNECTION_PRINTER").ToLocalChecked());
     }
     if (eventCode & PRINTER_CHANGE_SET_FORM) {
-        result->Set(i++, Nan::New("PRINTER_CHANGE_SET_FORM").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_CHANGE_SET_FORM").ToLocalChecked());
     }
     if (eventCode & PRINTER_CHANGE_SET_JOB) {
-        result->Set(i++, Nan::New("PRINTER_CHANGE_SET_JOB").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_CHANGE_SET_JOB").ToLocalChecked());
     }
     if (eventCode & PRINTER_CHANGE_SET_PRINTER) {
-        result->Set(i++, Nan::New("PRINTER_CHANGE_SET_PRINTER").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_CHANGE_SET_PRINTER").ToLocalChecked());
     }
     if (eventCode & PRINTER_CHANGE_SET_PRINTER_DRIVER) {
-        result->Set(i++, Nan::New("PRINTER_CHANGE_SET_PRINTER_DRIVER").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_CHANGE_SET_PRINTER_DRIVER").ToLocalChecked());
     }
     if (eventCode & PRINTER_CHANGE_WRITE_JOB) {
-        result->Set(i++, Nan::New("PRINTER_CHANGE_WRITE_JOB").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_CHANGE_WRITE_JOB").ToLocalChecked());
     }
     if (eventCode & PRINTER_CHANGE_TIMEOUT) {
-        result->Set(i++, Nan::New("PRINTER_CHANGE_TIMEOUT").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_CHANGE_TIMEOUT").ToLocalChecked());
     }
 
     return result;
@@ -170,79 +172,79 @@ v8::Local<v8::Array> getPrinterStatusNames(DWORD status)
     int i = 0;
 
     if (status & PRINTER_STATUS_BUSY) {
-        result->Set(i++, Nan::New("PRINTER_STATUS_BUSY").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_STATUS_BUSY").ToLocalChecked());
     }
     if (status & PRINTER_STATUS_DOOR_OPEN) {
-        result->Set(i++, Nan::New("PRINTER_STATUS_DOOR_OPEN").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_STATUS_DOOR_OPEN").ToLocalChecked());
     }
     if (status & PRINTER_STATUS_ERROR) {
-        result->Set(i++, Nan::New("PRINTER_STATUS_ERROR").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_STATUS_ERROR").ToLocalChecked());
     }
     if (status & PRINTER_STATUS_INITIALIZING) {
-        result->Set(i++, Nan::New("PRINTER_STATUS_INITIALIZING").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_STATUS_INITIALIZING").ToLocalChecked());
     }
     if (status & PRINTER_STATUS_IO_ACTIVE) {
-        result->Set(i++, Nan::New("PRINTER_STATUS_IO_ACTIVE").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_STATUS_IO_ACTIVE").ToLocalChecked());
     }
     if (status & PRINTER_STATUS_MANUAL_FEED) {
-        result->Set(i++, Nan::New("PRINTER_STATUS_MANUAL_FEED").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_STATUS_MANUAL_FEED").ToLocalChecked());
     }
     if (status & PRINTER_STATUS_NO_TONER) {
-        result->Set(i++, Nan::New("PRINTER_STATUS_NO_TONER").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_STATUS_NO_TONER").ToLocalChecked());
     }
     if (status & PRINTER_STATUS_NOT_AVAILABLE) {
-        result->Set(i++, Nan::New("PRINTER_STATUS_NOT_AVAILABLE").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_STATUS_NOT_AVAILABLE").ToLocalChecked());
     }
     if (status & PRINTER_STATUS_OFFLINE) {
-        result->Set(i++, Nan::New("PRINTER_STATUS_OFFLINE").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_STATUS_OFFLINE").ToLocalChecked());
     }
     if (status & PRINTER_STATUS_OUT_OF_MEMORY) {
-        result->Set(i++, Nan::New("PRINTER_STATUS_OUT_OF_MEMORY").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_STATUS_OUT_OF_MEMORY").ToLocalChecked());
     }
     if (status & PRINTER_STATUS_OUTPUT_BIN_FULL) {
-        result->Set(i++, Nan::New("PRINTER_STATUS_OUTPUT_BIN_FULL").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_STATUS_OUTPUT_BIN_FULL").ToLocalChecked());
     }
     if (status & PRINTER_STATUS_PAGE_PUNT) {
-        result->Set(i++, Nan::New("PRINTER_STATUS_PAGE_PUNT").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_STATUS_PAGE_PUNT").ToLocalChecked());
     }
     if (status & PRINTER_STATUS_PAPER_JAM) {
-        result->Set(i++, Nan::New("PRINTER_STATUS_PAPER_JAM").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_STATUS_PAPER_JAM").ToLocalChecked());
     }
     if (status & PRINTER_STATUS_PAPER_OUT) {
-        result->Set(i++, Nan::New("PRINTER_STATUS_PAPER_OUT").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_STATUS_PAPER_OUT").ToLocalChecked());
     }
     if (status & PRINTER_STATUS_PAPER_PROBLEM) {
-        result->Set(i++, Nan::New("PRINTER_STATUS_PAPER_PROBLEM").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_STATUS_PAPER_PROBLEM").ToLocalChecked());
     }
     if (status & PRINTER_STATUS_PAUSED) {
-        result->Set(i++, Nan::New("PRINTER_STATUS_PAUSED").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_STATUS_PAUSED").ToLocalChecked());
     }
     if (status & PRINTER_STATUS_PENDING_DELETION) {
-        result->Set(i++, Nan::New("PRINTER_STATUS_PENDING_DELETION").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_STATUS_PENDING_DELETION").ToLocalChecked());
     }
     if (status & PRINTER_STATUS_POWER_SAVE) {
-        result->Set(i++, Nan::New("PRINTER_STATUS_POWER_SAVE").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_STATUS_POWER_SAVE").ToLocalChecked());
     }
     if (status & PRINTER_STATUS_PRINTING) {
-        result->Set(i++, Nan::New("PRINTER_STATUS_PRINTING").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_STATUS_PRINTING").ToLocalChecked());
     }
     if (status & PRINTER_STATUS_PROCESSING) {
-        result->Set(i++, Nan::New("PRINTER_STATUS_PROCESSING").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_STATUS_PROCESSING").ToLocalChecked());
     }
     if (status & PRINTER_STATUS_SERVER_UNKNOWN) {
-        result->Set(i++, Nan::New("PRINTER_STATUS_SERVER_UNKNOWN").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_STATUS_SERVER_UNKNOWN").ToLocalChecked());
     }
     if (status & PRINTER_STATUS_TONER_LOW) {
-        result->Set(i++, Nan::New("PRINTER_STATUS_TONER_LOW").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_STATUS_TONER_LOW").ToLocalChecked());
     }
     if (status & PRINTER_STATUS_USER_INTERVENTION) {
-        result->Set(i++, Nan::New("PRINTER_STATUS_USER_INTERVENTION").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_STATUS_USER_INTERVENTION").ToLocalChecked());
     }
     if (status & PRINTER_STATUS_WAITING) {
-        result->Set(i++, Nan::New("PRINTER_STATUS_WAITING").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_STATUS_WAITING").ToLocalChecked());
     }
     if (status & PRINTER_STATUS_WARMING_UP) {
-        result->Set(i++, Nan::New("PRINTER_STATUS_WARMING_UP").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("PRINTER_STATUS_WARMING_UP").ToLocalChecked());
     }
 
     return result;
@@ -307,40 +309,40 @@ v8::Local<v8::Array> getJobStatusNames(DWORD status)
     int i = 0;
 
     if (status & JOB_STATUS_BLOCKED_DEVQ) {
-        result->Set(i++, Nan::New("JOB_STATUS_BLOCKED_DEVQ").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("JOB_STATUS_BLOCKED_DEVQ").ToLocalChecked());
     }
     if (status & JOB_STATUS_DELETED) {
-        result->Set(i++, Nan::New("JOB_STATUS_DELETED").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("JOB_STATUS_DELETED").ToLocalChecked());
     }
     if (status & JOB_STATUS_DELETING) {
-        result->Set(i++, Nan::New("JOB_STATUS_DELETING").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("JOB_STATUS_DELETING").ToLocalChecked());
     }
     if (status & JOB_STATUS_ERROR) {
-        result->Set(i++, Nan::New("JOB_STATUS_ERROR").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("JOB_STATUS_ERROR").ToLocalChecked());
     }
     if (status & JOB_STATUS_OFFLINE) {
-        result->Set(i++, Nan::New("JOB_STATUS_OFFLINE").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("JOB_STATUS_OFFLINE").ToLocalChecked());
     }
     if (status & JOB_STATUS_PAPEROUT) {
-        result->Set(i++, Nan::New("JOB_STATUS_PAPEROUT").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("JOB_STATUS_PAPEROUT").ToLocalChecked());
     }
     if (status & JOB_STATUS_PAUSED) {
-        result->Set(i++, Nan::New("JOB_STATUS_PAUSED").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("JOB_STATUS_PAUSED").ToLocalChecked());
     }
     if (status & JOB_STATUS_PRINTED) {
-        result->Set(i++, Nan::New("JOB_STATUS_PRINTED").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("JOB_STATUS_PRINTED").ToLocalChecked());
     }
     if (status & JOB_STATUS_PRINTING) {
-        result->Set(i++, Nan::New("JOB_STATUS_PRINTING").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("JOB_STATUS_PRINTING").ToLocalChecked());
     }
     if (status & JOB_STATUS_RESTART) {
-        result->Set(i++, Nan::New("JOB_STATUS_RESTART").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("JOB_STATUS_RESTART").ToLocalChecked());
     }
     if (status & JOB_STATUS_SPOOLING) {
-        result->Set(i++, Nan::New("JOB_STATUS_SPOOLING").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("JOB_STATUS_SPOOLING").ToLocalChecked());
     }
     if (status & JOB_STATUS_USER_INTERVENTION) {
-        result->Set(i++, Nan::New("JOB_STATUS_USER_INTERVENTION").ToLocalChecked());
+        MY_NODE_SET_OBJECT(result, i++, Nan::New("JOB_STATUS_USER_INTERVENTION").ToLocalChecked());
     }
 
     return result;
